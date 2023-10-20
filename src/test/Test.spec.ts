@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 import { DataSource, DeleteResult } from 'typeorm';
 import isEqual from 'lodash.isequal';
 
-import { Child1Entity, Child2Entity, Parent1Entity, Parent2Entity } from '../server/Entities.js';
+import { Child1Entity, Child2Entity, Child3Entity, Parent1Entity, Parent2Entity, Parent3Entity } from '../server/Entities.js';
 
 let dataSource: DataSource = null;
 
@@ -11,7 +11,7 @@ function getDataSource(): DataSource {
         type: "postgres",
         database: "typeorm",
         schema: "public",
-        entities: [Child1Entity, Child2Entity, Parent1Entity, Parent2Entity ],
+        entities: [Child1Entity, Child2Entity, Child3Entity, Parent1Entity, Parent2Entity, Parent3Entity ],
         synchronize: true,
         logging: false,
         url: "postgres://postgres:password42@localhost:5432/typeorm"
@@ -95,6 +95,43 @@ describe("Entity Tests", () => {
         entity.children[0].name = newName;
 
         const updatedEntity: Parent2Entity = await repository.save(entity);
+
+        expect(updatedEntity.name).toEqual(newName);
+        expect(updatedEntity.children[0].name).toEqual(newName);
+
+        const result: DeleteResult = await repository.delete({ id: entity.id });
+
+        expect(result.affected).toEqual(1);
+        expect(await repository.count()).toEqual(initialCount);
+    })
+
+    test("Test Parent3", async () => {
+        const repository = dataSource.getRepository(Parent3Entity);
+        const initialCount: number = await repository.count();
+        const parent3: Parent3Entity = new Parent3Entity();
+
+        parent3.name = "Fred";
+        parent3.children = [];
+
+        [0, 1].forEach((value, index) => {
+            const child3: Child3Entity = new Child3Entity();
+
+            child3.name = "Child "+value;
+            child3.position = index;
+            parent3.children.push(child3);
+        })
+
+        const entity: Parent3Entity = await repository.save(parent3);
+
+        expect(await repository.count()).toEqual(initialCount+1);
+        expect(isEqual(entity, parent3)).toBeTruthy();
+
+        const newName = "Blah";
+
+        entity.name = newName;
+        entity.children[0].name = newName;
+
+        const updatedEntity: Parent3Entity = await repository.save(entity);
 
         expect(updatedEntity.name).toEqual(newName);
         expect(updatedEntity.children[0].name).toEqual(newName);
