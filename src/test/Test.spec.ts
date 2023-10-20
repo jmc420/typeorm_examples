@@ -6,7 +6,7 @@ import { Child1Entity, Child2Entity, Child3Entity, Parent1Entity, Parent2Entity,
 
 let dataSource: DataSource = null;
 
-function getDataSource(): DataSource {
+function getPostgresDataSource(): DataSource {
     return new DataSource({
         type: "postgres",
         database: "typeorm",
@@ -18,8 +18,22 @@ function getDataSource(): DataSource {
     });
 }
 
+function getMySQLDataSource(): DataSource {
+    return new DataSource({
+        type: "mysql",
+        database: "typeorm",
+        entities: [Child1Entity, Child2Entity, Child3Entity, Parent1Entity, Parent2Entity, Parent3Entity ],
+        synchronize: true,
+        logging: false,
+        host: "localhost",
+		port: 3306,
+		username: "root",
+		password: "password42"
+    });
+}
+
 beforeAll(async () => {
-    const ds = getDataSource();
+    const ds = getPostgresDataSource();
 
     dataSource = await ds.initialize();
 })
