@@ -1,0 +1,41 @@
+{
+	"name": "typeorm_examples",
+	"type": "module",
+	"version": "1.0.0",
+	"dependencies": {
+		"lodash.clonedeep": "^4.5.0",
+		"lodash.isequal": "^4.5.0",
+		"loglevel": "^1.6.7",
+		"reflect-metadata": "^0.1.13",
+		"typeorm": "^0.3.17",
+		"pg": "^8.10.0"
+	},
+	"devDependencies": {
+		"@types/jest": "^26.0.20",
+		"@types/node": "^20.5.7",
+		"jest": "27.1.0",
+		"typescript": "^5.1.6"
+	},
+	"engines": {
+		"node": ">=^18"
+	},
+	"jest": {
+		"collectCoverage": true,
+		"moduleFileExtensions": [
+			"js"
+		],
+		"testEnvironment": "jest-environment-node"
+	},
+	"nodemonConfig": {
+		"env": {
+			"PORT": "8080"
+		}
+	},
+	"scripts": {
+		"all": "npm run compile && npm run test",
+		"clean": "rm -fr ./node_modules ./build/*",
+		"compile": "tsc $*",
+		"debug-test": "NODE_OPTIONS='--experimental-vm-modules' node --inspect-brk=7010 ./node_modules/.bin/jest --runInBand $*",
+		"test": "NODE_OPTIONS='--experimental-vm-modules' jest $*"
+	}
+}
